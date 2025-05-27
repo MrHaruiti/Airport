@@ -1,0 +1,227 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Terminal Virtual DXB</title>
+  <link rel="icon" href="https://upload.wikimedia.org/wikipedia/commons/e/e0/Airplane_silhouette.png">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0; padding: 0;
+      background: #ecf0f1;
+    }
+    header {
+      background: #2c3e50;
+      color: white;
+      padding: 10px;
+      text-align: center;
+    }
+    .container {
+      padding: 10px;
+    }
+    .terminal-grid {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 6px;
+      margin-bottom: 20px;
+    }
+    .gate {
+      background: #bdc3c7;
+      border: 1px solid #7f8c8d;
+      padding: 10px;
+      font-size: 12px;
+      min-height: 50px;
+      text-align: center;
+      border-radius: 5px;
+    }
+    .occupied {
+      background: #27ae60;
+      color: white;
+      font-weight: bold;
+    }
+    form, table {
+      background: white;
+      padding: 10px;
+      border-radius: 5px;
+      margin-bottom: 20px;
+      width: 100%;
+    }
+    input, select {
+      width: 100%;
+      padding: 8px;
+      margin: 6px 0;
+    }
+    button {
+      padding: 10px;
+      background: #2980b9;
+      color: white;
+      border: none;
+      width: 100%;
+      margin-top: 10px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+    th, td {
+      border: 1px solid #ccc;
+      padding: 6px;
+      text-align: left;
+    }
+    th {
+      background: #3498db;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Terminal Virtual DXB - Terminal 1</h1>
+  </header>
+  <div class="container">
+    <form id="flightForm">
+      <label>Flight</label><input type="text" id="flight" required>
+      <label>Airline</label><input type="text" id="airline" required>
+      <label>A/C</label><input type="text" id="aircraft" required>
+      <label>Origem</label><input type="text" id="origin" required>
+      <label>Destino</label><input type="text" id="destination" required>
+      <label>Tipo de Voo</label>
+      <select id="type">
+        <option>Regular</option>
+        <option>Charter</option>
+        <option>Sazonal</option>
+        <option>Não Regular</option>
+        <option>VIP</option>
+      </select>
+      <label>Horário de Pouso</label><input type="time" id="arrival">
+      <label>Horário de Decolagem</label><input type="time" id="departure">
+      <button type="submit">Adicionar Voo</button>
+    </form>
+
+    <h2>Pátio - Terminal 1 (36 posições)</h2>
+    <div class="terminal-grid" id="gateGrid"></div>
+
+    <h2>Painel de Voos</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Flight</th><th>Airline</th><th>A/C</th><th>Origem</th><th>Destino</th><th>Status</th><th>Ação</th>
+        </tr>
+      </thead>
+      <tbody id="flightTable"></tbody>
+    </table>
+  </div>
+
+  <script>
+    const flightForm = document.getElementById("flightForm");
+    const gateGrid = document.getElementById("gateGrid");
+    const flightTable = document.getElementById("flightTable");
+
+    let gates = Array(36).fill(null);
+    let flights = [];
+
+    function loadData() {
+      try {
+        flights = JSON.parse(localStorage.getItem("flights")) || [];
+      } catch {
+        flights = [];
+      }
+    }
+
+    function saveData() {
+      localStorage.setItem("flights", JSON.stringify(flights));
+    }
+
+    function renderGates() {
+      gateGrid.innerHTML = "";
+      for (let i = 0; i < 36; i++) {
+        const div = document.createElement("div");
+        div.className = "gate";
+        const flight = gates[i];
+        if (flight) {
+          div.classList.add("occupied");
+          div.innerHTML = `#${i+1}<br>${flight.flight}<br>${flight.status}`;
+        } else {
+          div.innerHTML = `#${i+1}<br>Livre`;
+        }
+        gateGrid.appendChild(div);
+      }
+    }
+
+    function renderFlights() {
+      flightTable.innerHTML = "";
+      flights.forEach((f, index) => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td>${f.flight}</td>
+          <td>${f.airline}</td>
+          <td>${f.aircraft}</td>
+          <td>${f.origin}</td>
+          <td>${f.destination}</td>
+          <td>${f.status || "Agendado"}</td>
+          <td>
+            ${f.status === "Em solo" ? `<button onclick="takeoff(${index})">Decolar</button>` 
+              : `<button onclick="land(${index})">Pousar</button>`}
+          </td>
+        `;
+        flightTable.appendChild(row);
+      });
+    }
+
+    function land(index) {
+      const f = flights[index];
+      const freeIndex = gates.findIndex(g => g === null);
+      if (freeIndex === -1) {
+        alert("Nenhuma posição livre no terminal!");
+        return;
+      }
+      f.status = "Em solo";
+      gates[freeIndex] = f;
+      saveData();
+      renderGates();
+      renderFlights();
+    }
+
+    function takeoff(index) {
+      const f = flights[index];
+      f.status = "Decolado";
+      const gateIndex = gates.findIndex(g => g && g.flight === f.flight);
+      if (gateIndex !== -1) {
+        gates[gateIndex] = null;
+      }
+      saveData();
+      renderGates();
+      renderFlights();
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+      loadData();
+      renderGates();
+      renderFlights();
+
+      flightForm.addEventListener("submit", function (e) {
+        e.preventDefault();
+        const newFlight = {
+          flight: document.getElementById("flight").value,
+          airline: document.getElementById("airline").value,
+          aircraft: document.getElementById("aircraft").value,
+          origin: document.getElementById("origin").value,
+          destination: document.getElementById("destination").value,
+          type: document.getElementById("type").value,
+          arrival: document.getElementById("arrival").value,
+          departure: document.getElementById("departure").value,
+          status: "Agendado"
+        };
+        flights.push(newFlight);
+        saveData();
+        renderFlights();
+        alert("Voo adicionado com sucesso!");
+        flightForm.reset();
+      });
+    });
+  </script>
+</body>
+</html>
