@@ -1,0 +1,147 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Terminal Virtual DXB - Simulação</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 0; padding: 0; background: #ecf0f1; }
+    header { background: #2c3e50; color: white; padding: 10px; text-align: center; }
+    .container { padding: 10px; }
+    .form-group { margin-bottom: 12px; }
+    input, select { width: 100%; padding: 8px; margin-top: 4px; }
+    button {
+      padding: 10px; background: #2980b9; color: white; border: none;
+      width: 100%; margin-top: 10px;
+    }
+
+    .runway-area {
+      position: relative;
+      margin: 20px auto;
+      width: 100%;
+      max-width: 600px;
+      height: 300px;
+      background: #bdc3c7;
+      border: 2px dashed #7f8c8d;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .runway {
+      position: absolute;
+      width: 100%;
+      height: 40px;
+      top: 10px;
+      left: 0;
+      background: #2c3e50;
+      color: white;
+      text-align: center;
+      line-height: 40px;
+      font-weight: bold;
+    }
+
+    .gate-row {
+      position: absolute;
+      bottom: 0;
+      display: flex;
+      justify-content: space-around;
+      width: 100%;
+    }
+
+    .gate {
+      background: #ecf0f1;
+      border: 1px solid #7f8c8d;
+      width: 60px;
+      height: 60px;
+      text-align: center;
+      line-height: 20px;
+      font-size: 12px;
+      border-radius: 4px;
+    }
+
+    .airplane {
+      position: absolute;
+      width: 40px;
+      height: 40px;
+      background: url('https://upload.wikimedia.org/wikipedia/commons/thumb/2/2b/Airplane_icon.svg/1024px-Airplane_icon.svg.png') no-repeat center center;
+      background-size: contain;
+      transition: all 2s ease;
+    }
+
+    .status-area {
+      margin-top: 20px;
+      font-weight: bold;
+    }
+
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Terminal Virtual DXB - Simulação de Pouso</h1>
+  </header>
+
+  <div class="container">
+    <form id="flightForm">
+      <div class="form-group">
+        <label>Flight</label>
+        <input type="text" id="flight" required />
+      </div>
+      <div class="form-group">
+        <label>Airline</label>
+        <input type="text" id="airline" required />
+      </div>
+      <div class="form-group">
+        <label>A/C</label>
+        <input type="text" id="aircraft" required />
+      </div>
+      <div class="form-group">
+        <label>Origem</label>
+        <input type="text" id="origin" required />
+      </div>
+      <button type="submit">Simular Pouso</button>
+    </form>
+
+    <div class="runway-area">
+      <div class="runway">PISTA</div>
+      <div class="airplane" id="airplane" style="top: 10px; left: 280px;"></div>
+      <div class="gate-row" id="gateRow">
+        <div class="gate" id="gate1">Gate 1</div>
+        <div class="gate" id="gate2">Gate 2</div>
+        <div class="gate" id="gate3">Gate 3</div>
+      </div>
+    </div>
+
+    <div class="status-area" id="statusArea">
+      Status: Aguardando simulação...
+    </div>
+  </div>
+
+  <script>
+    const form = document.getElementById("flightForm");
+    const airplane = document.getElementById("airplane");
+    const statusArea = document.getElementById("statusArea");
+
+    form.addEventListener("submit", function (e) {
+      e.preventDefault();
+      simulateLanding();
+    });
+
+    function simulateLanding() {
+      statusArea.textContent = "Status: Iniciando pouso...";
+      airplane.style.top = "10px";
+      airplane.style.left = "280px";
+
+      setTimeout(() => {
+        statusArea.textContent = "Status: Taxiando até o portão...";
+        airplane.style.top = "200px";
+        airplane.style.left = "50px";
+      }, 1000);
+
+      setTimeout(() => {
+        statusArea.textContent = "Status: Aeronave estacionada no Gate 1.";
+      }, 3000);
+    }
+  </script>
+</body>
+</html>
