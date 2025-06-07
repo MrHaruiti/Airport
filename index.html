@@ -120,50 +120,161 @@
       color: #d1d5db;
     }
 
-    /* Terminal tabs */
-    #terminal-tabs {
-      display: flex;
-      background: #f9fafb;
-      border-bottom: 2px solid #e5e7eb;
-      user-select: none;
-      user-drag: none;
-    }
+      /* Terminal tabs */
+      #terminal-tabs {
+        display: flex;
+        background: #f9fafb;
+        border-bottom: 2px solid #e5e7eb;
+        user-select: none;
+        user-drag: none;
+      }
 
-    body.dark #terminal-tabs {
-      background: #374151;
-      border-color: #4b5563;
-    }
+      body.dark #terminal-tabs {
+        background: #374151;
+        border-color: #4b5563;
+      }
 
-    #terminal-tabs button {
-      flex: 1;
-      padding: 1.25rem 0;
-      font-weight: 700;
-      font-size: 1.25rem;
-      border: none;
-      background: transparent;
-      cursor: pointer;
-      color: #6b7280;
-      transition: color 0.3s ease, border-bottom-color 0.3s ease;
-      border-bottom: 3px solid transparent;
-      user-select: none;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.5rem;
-      outline-offset: 3px;
-    }
+      #terminal-tabs button {
+        flex: 1;
+        padding: 1.25rem 0;
+        font-weight: 700;
+        font-size: 0.875rem;
+        border: none;
+        background: transparent;
+        cursor: pointer;
+        color: #6b7280;
+        transition: color 0.3s ease, border-bottom-color 0.3s ease;
+        border-bottom: 3px solid transparent;
+        user-select: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        outline-offset: 3px;
+      }
 
-    #terminal-tabs button[aria-selected="true"] {
-      color: #111827;
-      border-bottom-color: #3b82f6;
-      outline-offset: 3px;
-      outline: none;
-    }
+      /* Terminal tab colors */
+      #terminal-tabs button.terminal-tab-0 {
+        color: #40E0D0; /* Azul Turquesa */
+      }
+      #terminal-tabs button.terminal-tab-0[aria-selected="true"] {
+        color: #40E0D0;
+        border-bottom-color: #40E0D0;
+      }
+      #terminal-tabs button.terminal-tab-0:hover:not([aria-selected="true"]) {
+        color: #48d9d9;
+      }
 
-    body.dark #terminal-tabs button[aria-selected="true"] {
-      color: #d1d5db;
-      border-bottom-color: #60a5fa;
-    }
+      #terminal-tabs button.terminal-tab-1 {
+        color: #FFEF00; /* Amarelo Canario */
+      }
+      #terminal-tabs button.terminal-tab-1[aria-selected="true"] {
+        color: #FFEF00;
+        border-bottom-color: #FFEF00;
+      }
+      #terminal-tabs button.terminal-tab-1:hover:not([aria-selected="true"]) {
+        color: #fff733;
+      }
+
+      #terminal-tabs button.terminal-tab-2 {
+        color: #FF69B4; /* Rosa Brilhante */
+      }
+      #terminal-tabs button.terminal-tab-2[aria-selected="true"] {
+        color: #FF69B4;
+        border-bottom-color: #FF69B4;
+      }
+      #terminal-tabs button.terminal-tab-2:hover:not([aria-selected="true"]) {
+        color: #ff7cc9;
+      }
+
+      #terminal-tabs button.terminal-tab-3 {
+        color: #800080; /* Roxo Purpura */
+      }
+      #terminal-tabs button.terminal-tab-3[aria-selected="true"] {
+        color: #800080;
+        border-bottom-color: #800080;
+      }
+      #terminal-tabs button.terminal-tab-3:hover:not([aria-selected="true"]) {
+        color: #993399;
+      }
+
+      #terminal-tabs button.terminal-tab-4 {
+        color: #4CAF50; /* Verde Grama */
+      }
+      #terminal-tabs button.terminal-tab-4[aria-selected="true"] {
+        color: #4CAF50;
+        border-bottom-color: #4CAF50;
+      }
+      #terminal-tabs button.terminal-tab-4:hover:not([aria-selected="true"]) {
+        color: #5ec25e;
+      }
+
+      #terminal-tabs button.terminal-tab-5 {
+        color: #FF7F50; /* Laranja Triássico */
+      }
+      #terminal-tabs button.terminal-tab-5[aria-selected="true"] {
+        color: #FF7F50;
+        border-bottom-color: #FF7F50;
+      }
+      #terminal-tabs button.terminal-tab-5:hover:not([aria-selected="true"]) {
+        color: #ff8f66;
+      }
+
+      #terminal-tabs button.terminal-tab-6 {
+        color: #000000; /* Preto Quantum */
+      }
+      #terminal-tabs button.terminal-tab-6[aria-selected="true"] {
+        color: #000000;
+        border-bottom-color: #000000;
+      }
+      #terminal-tabs button.terminal-tab-6:hover:not([aria-selected="true"]) {
+        color: #222222;
+      }
+
+      #terminal-tabs button.terminal-tab-7 {
+        color: #FFBF00; /* Âmbar */
+      }
+      #terminal-tabs button.terminal-tab-7[aria-selected="true"] {
+        color: #FFBF00;
+        border-bottom-color: #FFBF00;
+      }
+      #terminal-tabs button.terminal-tab-7:hover:not([aria-selected="true"]) {
+        color: #ffcc33;
+      }
+
+      #terminal-tabs button.terminal-tab-8 {
+        color: #FFFFFF; /* Branco */
+        text-shadow: 0 0 2px #000000;
+      }
+      #terminal-tabs button.terminal-tab-8[aria-selected="true"] {
+        color: #FFFFFF;
+        border-bottom-color: #FFFFFF;
+        text-shadow: 0 0 3px #000000;
+      }
+      #terminal-tabs button.terminal-tab-8:hover:not([aria-selected="true"]) {
+        color: #f0f0f0;
+        text-shadow: 0 0 2px #000000;
+      }
+
+      #terminal-tabs button.terminal-tab-9 {
+        color: #800000; /* Bordô */
+      }
+      #terminal-tabs button.terminal-tab-9[aria-selected="true"] {
+        color: #800000;
+        border-bottom-color: #800000;
+      }
+      #terminal-tabs button.terminal-tab-9:hover:not([aria-selected="true"]) {
+        color: #993333;
+      }
+
+      #terminal-tabs button:hover:not([aria-selected="true"]) {
+        color: #2563eb;
+      }
+
+      body.dark #terminal-tabs button[aria-selected="true"] {
+        color: #d1d5db;
+        border-bottom-color: #60a5fa;
+      }
 
     #terminal-tabs button:hover:not([aria-selected="true"]) {
       color: #2563eb;
@@ -758,7 +869,7 @@
       'TPS6': 'Pista 2', 'TPS7': 'Pista 2', 'TPS8': 'Pista 2', 'TPS9': 'Pista 2', 'TPS10': 'Pista 2',
     };
 
-    const FLIGHTS_JSON_URL = 'https://raw.githubusercontent.com/MrHaruiti/Airport/refs/heads/main/backup_voos.json';
+    const FLIGHTS_JSON_URL = 'backup_voos.json';
 
     // State variables
     let flights = [];
@@ -808,6 +919,7 @@
         btn.setAttribute('tabindex', i === currentTerminalIndex ? '0' : '-1');
         btn.id = `terminal-tab-${i}`;
         btn.dataset.index = i;
+        btn.classList.add(`terminal-tab-${i}`);
         btn.addEventListener('click', () => switchTerminal(i));
         terminalTabs.appendChild(btn);
       }
@@ -1091,29 +1203,103 @@
     });
 
     // Load flights data, process and normalize
+    // Constants
+    const FLIGHTS_CSV_URL = 'NEW_AIRPORT.csv';
+
+    // Parse CSV row into flight object
+    function parseCSVRow(row) {
+      const [_, __, ___, ____, airline, from, icao, timeStr, aircraft, status, freq, tps] = row;
+      if (!airline || airline === 'AIRLINES') return null; // Skip empty rows and header
+      
+      // Parse arrival time (24-hour format)
+      const [hours, minutes] = timeStr.split(':');
+      const arrivalDate = new Date();
+      arrivalDate.setHours(parseInt(hours), parseInt(minutes), 0, 0);
+
+      // Calculate departure time (arrival + 2 hours)
+      const departureDate = new Date(arrivalDate);
+      departureDate.setHours(departureDate.getHours() + 2);
+
+      // Create arrival flight
+      const arrivalFlight = {
+        airline: airline || 'Unknown',
+        origin: from || '',
+        icao: icao || '',
+        number: generateFlightNumber(airline),
+        landingTime: arrivalDate,
+        departureTime: null,
+        aircraft: aircraft || '',
+        position: null,
+        regNumber: generateRegNumber({ company: airline }),
+        status: status || 'Scheduled',
+        cancelledTimestamp: null,
+        type: 'landing',
+        terminal: tps || null,
+        frequency: freq || null
+      };
+
+      // Create corresponding departure flight
+      const departureFlight = {
+        airline: airline || 'Unknown',
+        destination: from || '', // Return flight to origin
+        icao: icao || '',
+        number: generateFlightNumber(airline),
+        landingTime: null,
+        departureTime: departureDate,
+        aircraft: aircraft || '',
+        position: null,
+        regNumber: generateRegNumber({ company: airline }),
+        status: status || 'Scheduled',
+        cancelledTimestamp: null,
+        type: 'departure',
+        terminal: tps || null,
+        frequency: freq || null
+      };
+
+      return [arrivalFlight, departureFlight];
+    }
+
+    // Generate a flight number based on airline name
+    function generateFlightNumber(airline) {
+      const prefix = airline.split(' ')[0].substring(0, 2).toUpperCase();
+      const number = Math.floor(Math.random() * 9000) + 1000;
+      return `${prefix}${number}`;
+    }
+
     function loadFlightsData() {
       showSnackbar('Carregando lista de voos...');
-      fetch(FLIGHTS_JSON_URL)
+      fetch(FLIGHTS_CSV_URL)
         .then(resp => {
           if (!resp.ok) throw new Error(`Erro ${resp.status}`);
-          return resp.json();
+          return resp.text();
         })
-        .then(data => {
-          flights = data.map(f => {
-            f.landingTime = f.landingTime ? new Date(f.landingTime) : null;
-            f.departureTime = f.departureTime ? new Date(f.departureTime) : null;
-            f.frequency = f.frequency || null;
-            f.position = f.position || null;
-            f.regNumber = f.regNumber || generateRegNumber(f);
-            f.status = 'Scheduled';
-            f.cancelledTimestamp = null;
-            f.type = f.type || (f.landingTime ? 'landing' : 'departure');
-            return f;
-          });
-          createTerminalTabs();
-          renderPositions();
-          renderFlightList();
-          showSnackbar('Lista de voos carregada com sucesso.');
+        .then(csvText => {
+          try {
+            // Split CSV into rows, filter out empty rows, and parse valid rows
+            const rows = csvText
+              .split('\n')
+              .map(row => row.trim()) // Trim whitespace
+              .filter(row => row.length > 0); // Remove empty lines
+
+            // Process each valid row
+            flights = [];
+            rows.forEach(row => {
+              const columns = row.split(',');
+              if (columns.length >= 12) { // Make sure we have all needed columns
+                const flightPair = parseCSVRow(columns);
+                if (flightPair) {
+                  flights.push(...flightPair); // Spread operator to add both flights
+                }
+              }
+            });
+
+            createTerminalTabs();
+            renderPositions();
+            renderFlightList();
+            showSnackbar('Lista de voos carregada com sucesso.');
+          } catch (error) {
+            throw new Error(`Erro ao processar CSV: ${error.message}`);
+          }
         })
         .catch(err => {
           showSnackbar(`Falha ao carregar voos: ${err.message}`);
