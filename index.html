@@ -23,7 +23,6 @@
       background: #1f2937; /* dark gray bg */
       color: #d1d5db; /* light gray text */
     }
-
     /* Header Sticky */
     header#app-header {
       position: sticky;
@@ -81,7 +80,6 @@
     body.dark #current-time {
       color: #d1d5db;
     }
-
     /* Container layout */
     #app-container {
       display: flex;
@@ -99,7 +97,6 @@
       background: #111827;
       color: #d1d5db;
     }
-
     /* Terminal Tabs */
     #terminal-tabs {
       display: flex;
@@ -143,7 +140,6 @@
     body.dark #terminal-tabs button:hover:not([aria-selected="true"]) {
       color: #93c5fd;
     }
-
     /* Tabs icon svg */
     .tab-icon {
       stroke: currentColor;
@@ -151,7 +147,6 @@
       width: 18px; height: 18px;
       user-select: none;
     }
-
     /* Terminal Content Area */
     #terminal-content {
       flex: 1;
@@ -242,7 +237,6 @@
       color: #93c5fd;
       font-style: italic;
     }
-
     /* Side panel */
     #side-panel {
       width: 320px;
@@ -309,7 +303,6 @@
     body.dark #flight-tabs button:hover:not([aria-selected="true"]) {
       color: #93c5fd;
     }
-
     /* Flights list */
     #flight-list {
       flex: 1;
@@ -407,7 +400,6 @@
       color: #9ca3af;
       font-style: italic;
     }
-
     /* Status dropdown inside flight card */
     .flight-status-select {
       margin-top: 0.5rem;
@@ -433,7 +425,6 @@
       border-color: #3b82f6;
       box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.35);
     }
-
     /* Modal backdrop */
     #modal-backdrop {
       position: fixed;
@@ -551,7 +542,6 @@
       background-color: #6b7280;
       outline: none;
     }
-
     /* Scrollbar for side panel and positions */
     #flight-list::-webkit-scrollbar,
     .positions-grid::-webkit-scrollbar {
@@ -566,39 +556,6 @@
     body.dark .positions-grid::-webkit-scrollbar-thumb {
       background-color: #60a5fa;
     }
-
-    /* Tooltip */
-    .tooltip {
-      position: relative;
-      display: inline-block;
-      cursor: help;
-    }
-    .tooltip:hover .tooltiptext,
-    .tooltip:focus-visible .tooltiptext {
-      visibility: visible;
-      opacity: 1;
-    }
-    .tooltiptext {
-      visibility: hidden;
-      width: max-content;
-      max-width: 280px;
-      background-color: black;
-      color: #fff;
-      text-align: center;
-      border-radius: 0.25rem;
-      padding: 0.4rem 0.75rem;
-      position: absolute;
-      z-index: 10;
-      bottom: 125%;
-      left: 50%;
-      transform: translateX(-50%);
-      opacity: 0;
-      transition: opacity 0.3s;
-      font-size: 0.85rem;
-      user-select: none;
-      pointer-events: none;
-    }
-
     /* Snackbar/Toast */
     #snackbar {
       visibility: hidden;
@@ -628,7 +585,6 @@
       color: #111827;
       box-shadow: 0 6px 20px rgb(96 165 250 / 0.9);
     }
-
     /* Filter header in side panel */
     #side-panel-filters {
       padding: 0.5rem 1.25rem;
@@ -657,7 +613,6 @@
       cursor: pointer;
       user-select: none;
     }
-
     /* Update button */
     #update-flights-btn {
       margin-left: 1rem;
@@ -686,7 +641,6 @@
     body.dark #update-flights-btn:focus-visible {
       background-color: #3b82f6;
     }
-
   </style>
 </head>
 <body>
@@ -764,35 +718,11 @@
     'Delayed','Cancelled'
   ];
 
-  // Dados simulados
-  let flights = [
-    {id: 'AV101', airline:'Azul', aircraft:'Airbus A320', origin:'GRU', destination:'SBGR',
-      terminal:'TPS1', position:null, landingTime:new Date(Date.now() + 30*60000),
-      departureTime:new Date(Date.now() + 180*60000), frequency: 'Diário', type: 'landing',
-      status: 'Scheduled', regNumber: null, cancelledTimestamp: null },
-    {id: 'EM777', airline:'Emirates', aircraft:'B77W', origin:'DXB', destination:'SBGR',
-      terminal:'TPS5', position:null,
-      landingTime:new Date(Date.now() + 30*60000),
-      departureTime:new Date(Date.now() + 360*60000),
-      frequency: 'Semanal', nextFlightDay: new Date(Date.now() + 7*24*3600*1000).getDay(),
-      type: 'landing', status: 'Confirmed', regNumber: null, cancelledTimestamp: null },
-    {id: 'JJ404', airline:'LATAM', aircraft:'B738', origin:'SCL', destination:'SBGR',
-      terminal:'TPS9', position:null, landingTime:new Date(Date.now() + 10*60000),
-      departureTime:new Date(Date.now() + 150*60000), frequency: 'Diário', type: 'landing',
-      status: 'Delayed', regNumber: null, cancelledTimestamp: null },
-    {id: 'GOL221', airline:'Gol', aircraft:'B737', origin:'VCP', destination:'SBGR',
-      terminal:'TPS3', position:null, landingTime:new Date(Date.now() + 90*60000),
-      departureTime:new Date(Date.now() + 210*60000), frequency: 'Diário', type: 'landing',
-      status: 'Cancelled', regNumber: null, cancelledTimestamp: null },
-    {id: 'AV101D', airline:'Azul', aircraft:'Airbus A320', origin:'SBGR', destination:'GRU',
-      terminal:'TPS5', position:'TPS5-01', landingTime:null,
-      departureTime:new Date(Date.now() + 40*60000), frequency: 'Diário',
-      type: 'departure', status: 'Scheduled', regNumber: 'REG1001', cancelledTimestamp: null },
-    {id: 'EM777D', airline:'Emirates', aircraft:'B77W', origin:'SBGR', destination:'DXB',
-      terminal:'TPS6', position:'TPS6-05', landingTime:null,
-      departureTime:new Date(Date.now() + 240*60000), frequency: 'Semanal',
-      type: 'departure', status: 'Scheduled', regNumber: 'REG2002', cancelledTimestamp: null }
-  ];
+  // URL do JSON hospedado no GitHub
+  const FLIGHTS_JSON_URL = 'https://raw.githubusercontent.com/MrHaruiti/Airport/refs/heads/main/backup_voos.json';
+
+  // Dados de voos carregados (initialmente vazio)
+  let flights = [];
 
   // Variáveis de estado e DOM
   let currentTerminalIndex = 0;
@@ -829,6 +759,7 @@
     </svg>`
   };
 
+  // Exibe mensagem temporária
   function showSnackbar(message) {
     snackbar.textContent = message;
     snackbar.classList.add('show');
@@ -837,6 +768,7 @@
 
   // Cria abas dos terminais com icon
   function createTerminalTabs() {
+    terminalTabs.innerHTML = '';
     for(let i=0; i < TERMINAL_COUNT; i++) {
       const btn = document.createElement('button');
       btn.type = 'button';
@@ -971,16 +903,24 @@
             f.status = 'Scheduled';
             f.cancelledTimestamp = null;
             // Ajustar landingTime e departureTime para o próximo dia
-            let land = new Date(f.landingTime.getTime() + 24*3600*1000);
-            let dep = new Date(f.departureTime.getTime() + 24*3600*1000);
-            f.landingTime = land;
-            f.departureTime = dep;
+            if(f.landingTime) {
+              let land = new Date(f.landingTime.getTime() + 24*3600*1000);
+              f.landingTime = land;
+            }
+            if(f.departureTime) {
+              let dep = new Date(f.departureTime.getTime() + 24*3600*1000);
+              f.departureTime = dep;
+            }
           } else if(f.frequency === 'Semanal') {
             // Incrementa a data para a próxima semana (7 dias)
-            let land = new Date(f.landingTime.getTime() + 7*24*3600*1000);
-            let dep = new Date(f.departureTime.getTime() + 7*24*3600*1000);
-            f.landingTime = land;
-            f.departureTime = dep;
+            if(f.landingTime) {
+              let land = new Date(f.landingTime.getTime() + 7*24*3600*1000);
+              f.landingTime = land;
+            }
+            if(f.departureTime) {
+              let dep = new Date(f.departureTime.getTime() + 7*24*3600*1000);
+              f.departureTime = dep;
+            }
             f.status = 'Scheduled';
             f.cancelledTimestamp = null;
           } else {
@@ -1303,12 +1243,14 @@
     const timestamp = Date.now().toString().slice(-5);
     return `${prefix}${timestamp}`;
   }
+
+  // Atualiza status dos voos conforme horário e processa fila de pouso
   function periodicUpdate() {
     const now = Date.now();
 
     flights.forEach(f => {
       if(f.type === 'landing') {
-        if(f.status === 'Scheduled' && f.landingTime - now <= 60*60000) {
+        if(f.status === 'Scheduled' && f.landingTime && (f.landingTime.getTime() - now <= 60*60000)) {
           f.status = f.status === 'Cancelled' ? 'Cancelled' : 'Confirmed';
         }
       }
@@ -1322,10 +1264,12 @@
 
     setTimeout(periodicUpdate, 10000);
   }
+  // Atualiza horário local no cabeçalho
   function updateLocalTime() {
     const now = new Date();
     currentTimeEl.textContent = now.toLocaleTimeString([], {hour: '2-digit', minute: '2-digit', second:'2-digit'});
   }
+  // Alterna tema claro/escuro
   function toggleTheme() {
     document.body.classList.toggle('dark');
     const isDark = document.body.classList.contains('dark');
@@ -1334,8 +1278,7 @@
   }
   themeToggleBtn.addEventListener('click', toggleTheme);
   updateFlightsBtn.addEventListener('click', () => {
-    showSnackbar('Lista de voos atualizada');
-    renderFlightList();
+    loadFlightsData();
   });
   statusFilters.forEach(chk => {
     chk.addEventListener('change', () => {
@@ -1343,16 +1286,44 @@
     });
   });
 
+  function loadFlightsData() {
+    showSnackbar('Carregando lista de voos do backup...');
+    fetch(FLIGHTS_JSON_URL)
+      .then(res => {
+        if(!res.ok) throw new Error(`Erro ao buscar JSON: ${res.status}`);
+        return res.json();
+      })
+      .then(data => {
+        // Ajustar datas para objetos Date
+        flights = data.map(f => {
+          // Convert landingTime and departureTime string to Date objects if exist
+          if(f.landingTime) f.landingTime = new Date(f.landingTime);
+          if(f.departureTime) f.departureTime = new Date(f.departureTime);
+          // If frequency or other props undefined, fill defaults
+          f.frequency = f.frequency || null;
+          f.cancelledTimestamp = f.cancelledTimestamp || null;
+          f.regNumber = f.regNumber || null;
+          return f;
+        });
+        renderPositions();
+        renderFlightList();
+        showSnackbar('Lista de voos carregada com sucesso.');
+      })
+      .catch(err => {
+        showSnackbar(`Falha ao carregar lista de voos: ${err.message}`);
+      });
+  }
+
   // Inicialização
   function init() {
     createTerminalTabs();
-    renderPositions();
-    renderFlightList();
     setFlightListAriaLabel();
     updateLocalTime();
     setInterval(updateLocalTime, 1000);
+    loadFlightsData();
     periodicUpdate();
   }
+
   init();
 
 </script>
