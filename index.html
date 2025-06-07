@@ -457,7 +457,9 @@
       color: #93c5fd;
     }
 
-    #update-flights-btn {
+    #update-flights-btn,
+    #export-flights-btn,
+    #import-flights-btn {
       margin-left: 1rem;
       background-color: #3b82f6;
       border: none;
@@ -473,19 +475,33 @@
     }
 
     #update-flights-btn:hover,
-    #update-flights-btn:focus-visible {
+    #update-flights-btn:focus-visible,
+    #export-flights-btn:hover,
+    #export-flights-btn:focus-visible,
+    #import-flights-btn:hover,
+    #import-flights-btn:focus-visible {
       background-color: #2563eb;
       outline: none;
     }
 
-    body.dark #update-flights-btn {
+    body.dark #update-flights-btn,
+    body.dark #export-flights-btn,
+    body.dark #import-flights-btn {
       background-color: #60a5fa;
       color: #111827;
     }
 
     body.dark #update-flights-btn:hover,
-    body.dark #update-flights-btn:focus-visible {
+    body.dark #update-flights-btn:focus-visible,
+    body.dark #export-flights-btn:hover,
+    body.dark #export-flights-btn:focus-visible,
+    body.dark #import-flights-btn:hover,
+    body.dark #import-flights-btn:focus-visible {
       background-color: #3b82f6;
+    }
+
+    #import-file-input {
+      display: none;
     }
 
     /* Flight list */
@@ -832,6 +848,10 @@
           aria-label="Mostrar voos de decolagem">🛫 Decolagens</button>
         <button id="update-flights-btn" type="button" aria-label="Atualizar lista de voos" title="Atualizar lista de voos">↻
           Atualizar</button>
+        <button id="export-flights-btn" type="button" aria-label="Exportar voos" title="Exportar voos para backup">💾
+          Backup</button>
+        <button id="import-flights-btn" type="button" aria-label="Importar voos" title="Importar voos do backup">📂
+          Importar</button>
       </nav>
       <div id="side-panel-filters" aria-label="Filtros de status de voos" role="region">
         <label><input type="checkbox" name="status-filter" value="Confirmed" checked> Confirmed</label>
@@ -854,6 +874,9 @@
     </div>
   </div>
 
+  <!-- Hidden file input for import -->
+  <input type="file" id="import-file-input" accept=".json,.csv" style="display: none;">
+
   <!-- Snackbar -->
   <div id="snackbar" role="alert" aria-live="assertive" aria-atomic="true"></div>
 
@@ -868,8 +891,6 @@
       'TPS1': 'Pista 1', 'TPS2': 'Pista 1', 'TPS3': 'Pista 1', 'TPS4': 'Pista 1', 'TPS5': 'Pista 1',
       'TPS6': 'Pista 2', 'TPS7': 'Pista 2', 'TPS8': 'Pista 2', 'TPS9': 'Pista 2', 'TPS10': 'Pista 2',
     };
-
-    const FLIGHTS_JSON_URL = 'backup_voos.json';
 
     // State variables
     let flights = [];
@@ -1541,43 +1562,94 @@
       flightList.setAttribute('aria-label', label);
     }
 
-    // Load flights from github JSON, normalize, generate regNumber
-    function loadFlightsData() {
-      showSnackbar('Carregando lista de voos...');
-      fetch(FLIGHTS_JSON_URL)
-        .then(res => {
-          if (!res.ok) throw new Error(`Erro ${res.status}`);
-          return res.json();
-        })
-        .then(data => {
-          flights = data.map(f => {
-            f.landingTime = f.landingTime ? new Date(f.landingTime) : null;
-            f.departureTime = f.departureTime ? new Date(f.departureTime) : null;
-            f.frequency = f.frequency || null;
-            f.position = f.position || null;
-            f.regNumber = f.regNumber || generateRegNumber(f);
-            f.status = 'Scheduled';
-            f.cancelledTimestamp = null;
-            f.type = f.type || (f.landingTime ? 'landing' : 'departure');
-            f.number = f.number || f.id || 'UNKNOWN';
-            f.terminal = f.terminal || (f.position ? f.position.split('-')[0] : null);
-            return f;
-          });
-          renderPositions();
-          renderFlightList();
-          showSnackbar('Lista de voos carregada com sucesso.');
-        })
-        .catch(err => {
-          showSnackbar(`Falha ao carregar voos: ${err.message}`);
-        });
+    // Export flights data as JSON file
+    function exportFlights() {
+      const data = JSON.stringify(flights, null, 2);
+      const blob = new Blob([data], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+      a.href = url;
+      a.download = `flights-backup-${timestamp}.json`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      showSnackbar('Backup dos voos exportado com sucesso.');
     }
 
-    // Generate registration number for flight if not present
-    function generateRegNumber(flight) {
-      const prefix = (flight.airline || 'XXX').substring(0, 3).toUpperCase();
-      const suffix = Date.now().toString().slice(-5);
-      return `${prefix}${suffix}`;
+    // Import flights from JSON or CSV file
+    function importFlights(file) {
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        try {
+          if (file.name.toLowerCase().endsWith('.json')) {
+            // Process JSON file
+            const importedFlights = JSON.parse(e.target.result);
+            if (Array.isArray(importedFlights)) {
+              flights = importedFlights.map(f => ({
+                ...f,
+                landingTime: f.landingTime ? new Date(f.landingTime) : null,
+                departureTime: f.departureTime ? new Date(f.departureTime) : null
+              }));
+              renderPositions();
+              renderFlightList();
+              showSnackbar('Voos importados com sucesso do arquivo JSON.');
+            } else {
+              throw new Error('Formato de arquivo JSON inválido');
+            }
+          } else if (file.name.toLowerCase().endsWith('.csv')) {
+            // Process CSV file
+            const rows = e.target.result
+              .split('\n')
+              .map(row => row.trim())
+              .filter(row => row.length > 0);
+
+            flights = [];
+            rows.forEach(row => {
+              const columns = row.split(',');
+              if (columns.length >= 12) {
+                const flightPair = parseCSVRow(columns);
+                if (flightPair) {
+                  flights.push(...flightPair);
+                }
+              }
+            });
+
+            if (flights.length > 0) {
+              renderPositions();
+              renderFlightList();
+              showSnackbar('Voos importados com sucesso do arquivo CSV.');
+            } else {
+              throw new Error('Nenhum voo válido encontrado no arquivo CSV');
+            }
+          } else {
+            throw new Error('Formato de arquivo não suportado. Use .json ou .csv');
+          }
+        } catch (err) {
+          showSnackbar(`Erro ao importar voos: ${err.message}`);
+        }
+      };
+      reader.onerror = function() {
+        showSnackbar('Erro ao ler o arquivo.');
+      };
+      reader.readAsText(file);
     }
+
+    // Event listeners for export/import buttons
+    document.getElementById('export-flights-btn').addEventListener('click', exportFlights);
+    
+    document.getElementById('import-flights-btn').addEventListener('click', () => {
+      document.getElementById('import-file-input').click();
+    });
+    
+    document.getElementById('import-file-input').addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (file) {
+        importFlights(file);
+        e.target.value = ''; // Reset file input
+      }
+    });
 
     // Kick off app
     init();
