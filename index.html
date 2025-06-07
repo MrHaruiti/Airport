@@ -457,10 +457,14 @@
       color: #93c5fd;
     }
 
-    #update-flights-btn,
-    #export-flights-btn,
-    #import-flights-btn {
-      margin-left: 1rem;
+    .action-buttons {
+      display: flex;
+      gap: 0.5rem;
+      margin-left: auto;
+      padding-right: 1rem;
+    }
+
+    .action-buttons button {
       background-color: #3b82f6;
       border: none;
       color: white;
@@ -472,31 +476,22 @@
       user-select: none;
       align-self: center;
       transition: background-color 0.3s ease;
+      white-space: nowrap;
     }
 
-    #update-flights-btn:hover,
-    #update-flights-btn:focus-visible,
-    #export-flights-btn:hover,
-    #export-flights-btn:focus-visible,
-    #import-flights-btn:hover,
-    #import-flights-btn:focus-visible {
+    .action-buttons button:hover,
+    .action-buttons button:focus-visible {
       background-color: #2563eb;
       outline: none;
     }
 
-    body.dark #update-flights-btn,
-    body.dark #export-flights-btn,
-    body.dark #import-flights-btn {
+    body.dark .action-buttons button {
       background-color: #60a5fa;
       color: #111827;
     }
 
-    body.dark #update-flights-btn:hover,
-    body.dark #update-flights-btn:focus-visible,
-    body.dark #export-flights-btn:hover,
-    body.dark #export-flights-btn:focus-visible,
-    body.dark #import-flights-btn:hover,
-    body.dark #import-flights-btn:focus-visible {
+    body.dark .action-buttons button:hover,
+    body.dark .action-buttons button:focus-visible {
       background-color: #3b82f6;
     }
 
@@ -846,12 +841,14 @@
           aria-label="Mostrar voos de pouso">✈️ Pousos</button>
         <button role="tab" id="tab-departures" aria-controls="panel-departures" aria-selected="false" tabindex="-1"
           aria-label="Mostrar voos de decolagem">🛫 Decolagens</button>
-        <button id="update-flights-btn" type="button" aria-label="Atualizar lista de voos" title="Atualizar lista de voos">↻
-          Atualizar</button>
-        <button id="export-flights-btn" type="button" aria-label="Exportar voos" title="Exportar voos para backup">💾
-          Backup</button>
-        <button id="import-flights-btn" type="button" aria-label="Importar voos" title="Importar voos do backup">📂
-          Importar</button>
+        <div class="action-buttons">
+          <button id="update-flights-btn" type="button" aria-label="Atualizar lista de voos" title="Atualizar lista de voos">↻
+            Atualizar</button>
+          <button id="export-flights-btn" type="button" aria-label="Exportar voos" title="Exportar voos para backup">💾
+            Backup</button>
+          <button id="import-flights-btn" type="button" aria-label="Importar voos" title="Importar voos do backup">📂
+            Importar</button>
+        </div>
       </nav>
       <div id="side-panel-filters" aria-label="Filtros de status de voos" role="region">
         <label><input type="checkbox" name="status-filter" value="Confirmed" checked> Confirmed</label>
@@ -875,7 +872,7 @@
   </div>
 
   <!-- Hidden file input for import -->
-  <input type="file" id="import-file-input" accept=".json,.csv" style="display: none;">
+  <input type="file" id="import-file-input" accept=".json,.csv" style="position: absolute; left: -9999px;">
 
   <!-- Snackbar -->
   <div id="snackbar" role="alert" aria-live="assertive" aria-atomic="true"></div>
@@ -1578,13 +1575,39 @@
       showSnackbar('Backup dos voos exportado com sucesso.');
     }
 
-    // Import flights from JSON or CSV file
+
+
+    // Event listeners for export/import buttons
+    document.getElementById('export-flights-btn').addEventListener('click', exportFlights);
+    
+    const importBtn = document.getElementById('import-flights-btn');
+    const fileInput = document.getElementById('import-file-input');
+    
+    importBtn.addEventListener('click', () => {
+      console.log('Import button clicked');
+      fileInput.click();
+    });
+    
+    fileInput.addEventListener('change', (e) => {
+      console.log('File input changed');
+      const file = e.target.files[0];
+      if (file) {
+        console.log('File selected:', file.name);
+        importFlights(file);
+        e.target.value = ''; // Reset file input
+      }
+    });
+
+    // Modify importFlights to include logging
     function importFlights(file) {
+      console.log('Starting import for file:', file.name);
       const reader = new FileReader();
+      
       reader.onload = function(e) {
+        console.log('File loaded, processing...');
         try {
           if (file.name.toLowerCase().endsWith('.json')) {
-            // Process JSON file
+            console.log('Processing JSON file');
             const importedFlights = JSON.parse(e.target.result);
             if (Array.isArray(importedFlights)) {
               flights = importedFlights.map(f => ({
@@ -1592,6 +1615,7 @@
                 landingTime: f.landingTime ? new Date(f.landingTime) : null,
                 departureTime: f.departureTime ? new Date(f.departureTime) : null
               }));
+              console.log('JSON processed, found', flights.length, 'flights');
               renderPositions();
               renderFlightList();
               showSnackbar('Voos importados com sucesso do arquivo JSON.');
@@ -1599,14 +1623,15 @@
               throw new Error('Formato de arquivo JSON inválido');
             }
           } else if (file.name.toLowerCase().endsWith('.csv')) {
-            // Process CSV file
+            console.log('Processing CSV file');
             const rows = e.target.result
               .split('\n')
               .map(row => row.trim())
               .filter(row => row.length > 0);
 
+            console.log('CSV rows found:', rows.length);
             flights = [];
-            rows.forEach(row => {
+            rows.forEach((row, index) => {
               const columns = row.split(',');
               if (columns.length >= 12) {
                 const flightPair = parseCSVRow(columns);
@@ -1616,6 +1641,7 @@
               }
             });
 
+            console.log('CSV processed, found', flights.length, 'flights');
             if (flights.length > 0) {
               renderPositions();
               renderFlightList();
@@ -1627,29 +1653,18 @@
             throw new Error('Formato de arquivo não suportado. Use .json ou .csv');
           }
         } catch (err) {
+          console.error('Import error:', err);
           showSnackbar(`Erro ao importar voos: ${err.message}`);
         }
       };
-      reader.onerror = function() {
+      
+      reader.onerror = function(err) {
+        console.error('File read error:', err);
         showSnackbar('Erro ao ler o arquivo.');
       };
+      
       reader.readAsText(file);
     }
-
-    // Event listeners for export/import buttons
-    document.getElementById('export-flights-btn').addEventListener('click', exportFlights);
-    
-    document.getElementById('import-flights-btn').addEventListener('click', () => {
-      document.getElementById('import-file-input').click();
-    });
-    
-    document.getElementById('import-file-input').addEventListener('change', (e) => {
-      const file = e.target.files[0];
-      if (file) {
-        importFlights(file);
-        e.target.value = ''; // Reset file input
-      }
-    });
 
     // Kick off app
     init();
